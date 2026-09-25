@@ -31,7 +31,7 @@
         .container {
             max-width: 760px;
             margin: auto;
-            padding: 30px 20px 50px
+            padding: 30px 20px
         }
 
         header {
@@ -721,15 +721,32 @@
         }
 
         footer {
-            margin-top: 30px;
+            /* margin-top: 30px; */
+            padding: 20px 0;
             text-align: center;
             color: #64748b;
             font-size: 12px;
+            background-color: #966aae59;
+            /* border-radius: 100%; */
         }
 
         footer strong {
             color: #1e1b4b;
         }
+
+        .footer-brand {
+            display: inline-flex;
+            align-items: center;
+            vertical-align: middle;
+            margin: 0 0 4px;
+        }
+
+        .footer-brand img {
+            width: 150px;
+            height: auto;
+            display: block;
+        }
+
 
         @media(max-width:600px) {
             .container {
@@ -926,11 +943,15 @@
                     </section>
 
                     <div class="bot-brand">
-                        <img class="bot-logo" src="https://www.botchain.ai/icons/footer-logo.png" alt="BOT Chain">
+                        <a href="https://www.botchain.ai" target="_blank" rel="noopener noreferrer">
+                            <img class="bot-logo" src="https://www.botchain.ai/icons/footer-logo.png" alt="BOT Chain">
+                        </a>
+
                         <div class="bot-info">
                             <strong>Powered by BOT Chain</strong>
                             <span>Verify the project on-chain</span>
                         </div>
+
                         <a class="explorer-button" id="explorerButton" href="#" target="_blank"
                             rel="noopener noreferrer">
                             🔍 Explorer
@@ -942,8 +963,20 @@
             </div>
         </main>
 
-        <footer>Powered by <strong>BOT Chain</strong> · Explorer</footer>
+
     </div>
+
+    <footer>
+        <span>
+            Powered by
+            <strong class="footer-brand">
+                <a href="https://www.botchain.ai" target="_blank" rel="noopener noreferrer" class="footer-brand">
+                <img src="https://www.botchain.ai/icons/footer-logo.png" alt="BOT Chain"></a>
+            </strong>
+            · Explorer
+        </span>
+    </footer>
+
 
     <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.5/dist/ethers.umd.min.js"></script>
 
@@ -1205,7 +1238,7 @@ CHECK & SWITCH NETWORK (AUTO ADD MAINNET)
         }
 
         async function connectWallet() {
-            
+
             if (!window.ethereum) {
                 alert("Please install MetaMask first.");
                 return;
