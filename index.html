@@ -973,7 +973,7 @@
                 <a href="https://www.botchain.ai" target="_blank" rel="noopener noreferrer" class="footer-brand">
                 <img src="https://www.botchain.ai/icons/footer-logo.png" alt="BOT Chain"></a>
             </strong>
-            · Explorer
+            <a id="explorerLink" href="#" style="color: inherit; text-decoration: none;">· Explorer</a>
         </span>
     </footer>
 
@@ -990,6 +990,7 @@
         ];
         const MAINNET_CONTRACT_ADDRESS = CONTRACT_ADDRESS;
         const MAINNET_EXPLORER = `https://scan.botchain.ai/address/${MAINNET_CONTRACT_ADDRESS}`;
+        document.getElementById("explorerLink").href = MAINNET_EXPLORER;
 
         const challenges = [
             ["☕", "Visit Jl. Tunjungan"],
