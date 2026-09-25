@@ -161,45 +161,86 @@
             position: relative;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            min-height: 165px;
-            padding: 18px 14px;
+            min-height: 0;
+            padding: 0;
+            overflow: visible;
             border: 2px solid transparent;
             border-radius: 20px;
             background: rgba(255, 255, 255, .85);
             box-shadow: 0 8px 24px rgba(149, 157, 165, .12);
             backdrop-filter: blur(10px);
-            transition: .25s ease
+            transition: .25s ease;
         }
 
         .square:hover {
-            transform: translateY(-4px)
+            transform: translateY(-4px);
         }
 
-        .square.qr-selected {
-            border-color: #6366f1;
-            box-shadow: 0 0 0 4px rgba(99, 102, 241, .15)
+        .card-image {
+            position: relative;
+            width: 100%;
+            height: 210px;
+            overflow: hidden;
+            border-radius: 20px 20px 0 0;
         }
 
-        .square.completed {
-            border-color: #22c55e;
-            background: linear-gradient(135deg, #dcfce7, #bbf7d0)
+        .card-image img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
         }
 
-        .square.completed::after {
-            content: "✓";
+        /* Content di bawah gambar */
+        .card-content {
+            position: relative;
+            padding: 50px 14px 18px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        /* EMOJI NUMPUK DI ATAS GAMBAR */
+        .card-content .emoji {
             position: absolute;
-            top: 10px;
-            right: 12px;
+            top: -38px;
+            left: 50%;
+            transform: translateX(-50%);
+
+            width: 76px;
+            height: 76px;
+
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            color: #fff;
-            font-weight: 900;
-            background: #16a34a
+
+            border-radius: 100%;
+            background: #ffffff84;
+
+            font-size: 36px;
+
+            box-shadow:
+                0 10px 25px rgba(15, 23, 42, .16),
+                0 0 0 1px rgba(226, 232, 240, .8);
+
+            z-index: 10;
+        }
+
+
+        /* Judul */
+        .card-content .challenge {
+            margin: 0 0 18px;
+            color: #1e293b;
+            font-size: 15px;
+            font-weight: 700;
+            line-height: 1.35;
+            text-align: center;
+        }
+
+        /* Button */
+        .card-content .claim {
+            margin-top: auto;
         }
 
         .completed .claim {
@@ -703,8 +744,28 @@
             }
 
             .square {
-                min-height: 145px;
-                padding: 14px 10px
+                min-height: 0;
+                padding: 0;
+            }
+
+            .card-image {
+                height: 160px;
+            }
+
+            .card-content {
+                padding: 48px 8px 16px;
+            }
+
+            .card-content .emoji {
+                width: 58px;
+                height: 58px;
+                top: -29px;
+                border-radius: 16px;
+                font-size: 28px;
+            }
+
+            .challenge {
+                font-size: 13px;
             }
 
             .challenge {
@@ -1002,15 +1063,47 @@
 
         function createBoard() {
             board.innerHTML = "";
+
+            const images = [
+                "https://i.pinimg.com/1200x/0c/19/d8/0c19d8a4848a867cd6545d23905ae133.jpg",
+                "https://tourism.surabaya.go.id/api/helper/show-file/tourist-destination-files/9dec902e-8370-453d-9e3f-47a1f61ccb17",
+                "https://akcdn.detik.net.id/community/media/visual/2025/01/30/pasar-atom-surabaya-3_43.jpeg",
+                "https://i.pinimg.com/736x/a7/b0/c9/a7b0c94db5631c567d939d314fae5d33.jpg",
+                "https://i.pinimg.com/736x/59/b2/ca/59b2ca42bef2af12ec95c7073278fff2.jpg",
+                "https://i.pinimg.com/1200x/3b/87/12/3b87121ee92d0daf2908bce64d073389.jpg",
+                "https://tourism.surabaya.go.id/api/helper/show-file/tourist-destination-files/a08d1d5e-440f-458c-bbe8-7aef5abb6a05",
+                "https://i.pinimg.com/1200x/3c/b2/2c/3cb22cef391c60856303a8e538240a08.jpg",
+                "https://tiketwisata.surabaya.go.id/storage/tour/bis_shopping_culinary_track_1649147871.jpeg"
+            ];
+
             challenges.forEach(([emoji, title], index) => {
                 const square = document.createElement("div");
                 square.className = "square";
                 square.id = `square-${index}`;
-                square.innerHTML = `<div class="emoji">${emoji}</div><div class="challenge">${title}</div><button class="claim">Verify Visit</button>`;
+
+                square.innerHTML = `
+            <div class="card-image">
+                <img src="${images[index]}" alt="${title}">
+            </div>
+
+            <div class="card-content">
+                <div class="emoji">${emoji}</div>
+
+                <div class="challenge">
+                    ${title}
+                </div>
+
+                <button class="claim">
+                    Verify Visit
+                </button>
+            </div>
+        `;
+
                 square.querySelector(".claim").onclick = () => verifyLocation(index);
                 board.appendChild(square);
             });
         }
+
 
         function calculateBingoLines(grid) {
             return bingoLines.filter(([a, b, c]) => grid[a] && grid[b] && grid[c]).length;
@@ -1034,7 +1127,15 @@
         }
 
         function verifyLocation(id) {
-            document.querySelectorAll(".square").forEach(square => square.classList.remove("qr-selected"));
+            if (!currentAccount || !contract) {
+                statusText.innerText = "🔐 Please connect your wallet first to verify this challenge.";
+                alert("Please connect your wallet first before verifying a challenge.");
+                return;
+            }
+
+            document.querySelectorAll(".square").forEach(square =>
+                square.classList.remove("qr-selected")
+            );
 
             const square = document.getElementById(`square-${id}`);
             const button = square.querySelector(".claim");
@@ -1042,8 +1143,10 @@
             square.classList.add("qr-selected");
             button.innerText = "Claim on-chain";
             button.onclick = () => claimChallenge(id);
+
             statusText.innerText = `📍 ${challenges[id][1]} verified! Ready to claim on-chain.`;
         }
+
 
         async function checkNetwork() {
             if (!provider) return false;
@@ -1134,9 +1237,9 @@
         }
 
         async function claimChallenge(id) {
-            if (!contract) {
-                await connectWallet();
-                if (!contract) return;
+            if (!currentAccount || !contract) {
+                statusText.innerText = "🔐 Please connect your wallet first.";
+                return;
             }
 
             if (!(await checkNetwork())) return;
