@@ -948,8 +948,8 @@
     <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.5/dist/ethers.umd.min.js"></script>
 
     <script>
-        const CONTRACT_ADDRESS = "0x016052D388D5540d6b18cc30b53581A07Dbd6F88";
-        const BOT_CHAIN_ID = 968;
+        const CONTRACT_ADDRESS = "0xCb144645fc84b800f0C07c6032eDD120bEFCbe64";
+        const BOT_CHAIN_ID = 677;
         const CONTRACT_ABI = [
             "function completeChallenge(uint256 id)",
             "function isCompleted(address player,uint256 id) view returns (bool)",
@@ -1149,18 +1149,63 @@
         }
 
 
+        /*
+==========================================
+CHECK & SWITCH NETWORK (AUTO ADD MAINNET)
+==========================================
+*/
+
         async function checkNetwork() {
             if (!provider) return false;
-            const network = await provider.getNetwork();
 
-            if (Number(network.chainId) !== BOT_CHAIN_ID) {
-                statusText.innerText = "Please switch MetaMask to BOT Chain Testnet.";
-                return false;
+            const network = await provider.getNetwork();
+            const chainId = Number(network.chainId);
+
+            if (chainId !== BOT_CHAIN_ID) {
+                try {
+                    // Minta switch ke chain 677 (0x2A5)
+                    await window.ethereum.request({
+                        method: "wallet_switchEthereumChain",
+                        params: [{ chainId: "0x2A5" }]
+                    });
+                    return true;
+                } catch (switchError) {
+                    // Error 4902: Jaringan belum terdaftar di MetaMask user -> Otomatis tambahkan
+                    if (switchError.code === 4902) {
+                        try {
+                            await window.ethereum.request({
+                                method: "wallet_addEthereumChain",
+                                params: [
+                                    {
+                                        chainId: "0x2A5",
+                                        chainName: "BOT Chain Mainnet",
+                                        rpcUrls: ["https://rpc.botchain.ai"],
+                                        nativeCurrency: {
+                                            name: "BOT",
+                                            symbol: "BOT",
+                                            decimals: 18
+                                        },
+                                        blockExplorerUrls: ["https://scan.botchain.ai"]
+                                    }
+                                ]
+                            });
+                            return true;
+                        } catch (addError) {
+                            console.error("Gagal menambahkan BOT Chain Mainnet:", addError);
+                            statusText.innerText = "Gagal menambahkan BOT Chain Mainnet.";
+                            return false;
+                        }
+                    }
+                    console.error("Gagal berpindah jaringan:", switchError);
+                    statusText.innerText = "Silakan pindah ke BOT Chain Mainnet di MetaMask.";
+                    return false;
+                }
             }
             return true;
         }
 
         async function connectWallet() {
+            
             if (!window.ethereum) {
                 alert("Please install MetaMask first.");
                 return;
