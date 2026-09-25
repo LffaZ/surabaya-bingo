@@ -7,8 +7,6 @@ Surabaya Bingo transforms city exploration into an interactive on-chain scavenge
 
 Players complete real-world challenges and record their progress on-chain. Completing a full row, column, or diagonal unlocks a Bingo reward.
 
----
-
 ## 🌟 Key Features
 
 - **3×3 Interactive Bingo Grid** — 9 curated exploration challenges across Surabaya.
@@ -21,8 +19,6 @@ Players complete real-world challenges and record their progress on-chain. Compl
 - **Reward Details & QR Redemption** — Displays reward information and redemption details.
 - **Lightweight Web3 Frontend** — Single HTML file with no build system or framework.
 
----
-
 ## 🛠️ Tech Stack
 
 | Component | Technology |
@@ -34,8 +30,6 @@ Players complete real-world challenges and record their progress on-chain. Compl
 | Wallet | MetaMask |
 | Hosting | GitHub Pages |
 | Architecture | Zero-build static Web3 dApp |
-
----
 
 ## 🏗️ Architecture
 
@@ -61,8 +55,6 @@ The frontend:
 6. Calculates completed Bingo lines.
 7. Displays unlocked rewards.
 
----
-
 ## 📋 Bingo Challenges
 
 | # | Challenge |
@@ -79,8 +71,6 @@ The frontend:
 
 A Bingo line consists of three completed squares arranged horizontally, vertically, or diagonally.
 
----
-
 ## 🎁 Reward System
 
 | Bingo Lines | Reward |
@@ -94,10 +84,7 @@ A Bingo line consists of three completed squares arranged horizontally, vertical
 
 Reward availability, participating venues, dates, and terms may vary.
 
----
-
 ## 🚀 Deployment
-
 ### BOT Chain Mainnet
 
 | Parameter | Value |
@@ -124,8 +111,6 @@ Reward availability, participating venues, dates, and terms may vary.
 
 The smart contract is currently deployed on BOT Chain Mainnet, and the frontend is configured to use the Mainnet deployment.
 
----
-
 ## 🔗 Smart Contract Integration
 
 The frontend uses Ethers.js to communicate with the deployed contract.
@@ -142,8 +127,6 @@ const CONTRACT_ABI = [
     "function hasBingo(address player) view returns (bool)"
 ];
 ````
-
----
 
  ## 🎮 How to Play
 
@@ -163,7 +146,6 @@ const CONTRACT_ABI = [
 
  Complete three challenges horizontally, vertically, or diagonally to unlock a reward.
 
----
 
  ## 🔐 Wallet & Blockchain Flow
 
@@ -195,8 +177,6 @@ Bingo Line Completed
 Reward Unlocked
 ```
 
----
-
  ## 💻 Local Development
 
  Clone the repository:
@@ -226,7 +206,6 @@ http://localhost:8000
 
  Make sure MetaMask is installed and configured with BOT Chain.
 
----
 
  ## 📁 Project Structure
 
@@ -239,7 +218,6 @@ city-bingo/
 
  The `index.html` contains the complete frontend, including the UI, wallet connection, Ethers.js integration, and smart contract interaction.
 
----
 
  ## 🎯 Project Goal
 
@@ -255,13 +233,11 @@ city-bingo/
 - 🤝 Social participation
 - ⛓️ Meaningful blockchain adoption
 
----
 
  ## 📄 License
 
  This project is open-source and licensed under the MIT License.
 
----
 
  ## 🙏 Acknowledgements
 
