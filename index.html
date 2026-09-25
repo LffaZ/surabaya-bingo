@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>City Bingo — Surabaya</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
+            --text-main: #1e1b4b;
+            --text-muted: #64748b;
+            --green: #16a34a
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            color: var(--text-main);
+            font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #e0e7ff, #fce7f3, #ede9fe)
+        }
+
+        .container {
+            max-width: 760px;
+            margin: auto;
+            padding: 30px 20px 50px
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 25px
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -.5px;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent
+        }
+
+        button {
+            border: 0;
+            border-radius: 12px;
+            padding: 12px 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: .2s ease
+        }
+
+        button:hover:not(:disabled) {
+            transform: translateY(-2px)
+        }
+
+        button:disabled {
+            opacity: .7;
+            cursor: not-allowed
+        }
+
+        .connect-button {
+            color: #fff;
+            background: var(--primary-gradient);
+            box-shadow: 0 4px 14px rgba(168, 85, 247, .35)
+        }
+
+        .wallet {
+            display: inline-block;
+            margin-bottom: 25px;
+            padding: 6px 14px;
+            border: 1px solid rgba(99, 102, 241, .2);
+            border-radius: 20px;
+            color: #4f46e5;
+            font-size: 13px;
+            font-weight: 600;
+            background: rgba(255, 255, 255, .7);
+            backdrop-filter: blur(8px)
+        }
+
+        .page {
+            display: none
+        }
+
+        .page.active {
+            display: block
+        }
+
+        h1 {
+            margin: 0 0 6px;
+            font-size: 44px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #312e81, #4338ca, #6d28d9);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent
+        }
+
+        .subtitle {
+            margin-bottom: 20px;
+            color: var(--text-muted);
+            font-size: 16px;
+            font-weight: 500
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 24px
+        }
+
+        .stat-card {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 18px;
+            border: 1px solid rgba(99, 102, 241, .2);
+            border-radius: 16px;
+            background: rgba(255, 255, 255, .85);
+            box-shadow: 0 4px 16px rgba(149, 157, 165, .08);
+            backdrop-filter: blur(10px)
+        }
+
+        .stat-icon {
+            font-size: 26px
+        }
+
+        .stat-info {
+            display: flex;
+            flex-direction: column
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 900
+        }
+
+        .bingo {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px
+        }
+
+        .square {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 165px;
+            padding: 18px 14px;
+            border: 2px solid transparent;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, .85);
+            box-shadow: 0 8px 24px rgba(149, 157, 165, .12);
+            backdrop-filter: blur(10px);
+            transition: .25s ease
+        }
+
+        .square:hover {
+            transform: translateY(-4px)
+        }
+
+        .square.qr-selected {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, .15)
+        }
+
+        .square.completed {
+            border-color: #22c55e;
+            background: linear-gradient(135deg, #dcfce7, #bbf7d0)
+        }
+
+        .square.completed::after {
+            content: "✓";
+            position: absolute;
+            top: 10px;
+            right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            color: #fff;
+            font-weight: 900;
+            background: #16a34a
+        }
+
+        .completed .claim {
+            color: #fff;
+            background: var(--green);
+            box-shadow: 0 4px 12px rgba(22, 163, 74, .3);
+            cursor: default
+        }
+
+        .emoji {
+            font-size: 34px
+        }
+
+        .challenge {
+            margin: 8px 0;
+            color: #1e293b;
+            font-size: 15px;
+            font-weight: 700;
+            line-height: 1.35
+        }
+
+        .claim {
+            padding: 10px 12px;
+            border-radius: 10px;
+            color: #475569;
+            font-size: 13px;
+            background: #f1f5f9
+        }
+
+        .claim:hover:not(:disabled) {
+            color: #fff;
+            background: var(--primary-gradient)
+        }
+
+        .status {
+            margin-top: 30px;
+            padding: 18px;
+            border: 1px solid rgba(99, 102, 241, .2);
+            border-radius: 16px;
+            color: #3730a3;
+            text-align: center;
+            font-weight: 700;
+            background: #fff
+        }
+
+        .bingo-status {
+            display: none;
+            margin-top: 15px;
+            padding: 20px;
+            border: 2px solid #22c55e;
+            border-radius: 18px;
+            color: #166534;
+            text-align: center;
+            background: linear-gradient(135deg, #dcfce7, #bbf7d0)
+        }
+
+        .bingo-status.active {
+            display: block
+        }
+
+        .rewards-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 22px
+        }
+
+        .rewards-header h1 {
+            margin: 0;
+            font-size: 38px
+        }
+
+        .back-button {
+            padding: 9px 14px;
+            color: #4f46e5;
+            background: #fff;
+            border: 1px solid #e0e7ff
+        }
+
+        .reward-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px
+        }
+
+        .ticket {
+            position: relative;
+            display: grid;
+            grid-template-columns: 68px 1fr 42px;
+            align-items: center;
+            min-height: 112px;
+            overflow: hidden;
+            border-radius: 20px;
+            background: #f8fafc;
+            box-shadow: 0 5px 18px rgba(0, 0, 0, .08)
+        }
+
+        .ticket::before,
+        .ticket::after {
+            content: "";
+            position: absolute;
+            left: 58px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #ede9fe
+        }
+
+        .ticket::before {
+            top: -9px
+        }
+
+        .ticket::after {
+            bottom: -9px
+        }
+
+        .ticket-color {
+            align-self: stretch;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px
+        }
+
+        .ticket-content {
+            padding: 14px 10px 14px 18px
+        }
+
+        .ticket-date {
+            margin-bottom: 4px;
+            color: #64748b;
+            font-size: 12px
+        }
+
+        .ticket-title {
+            color: #1e293b;
+            font-size: 16px;
+            font-weight: 800;
+            line-height: 1.15
+        }
+
+        .ticket-location {
+            margin-top: 10px;
+            color: #94a3b8;
+            font-size: 12px
+        }
+
+        .ticket-action {
+            width: 34px;
+            height: 34px;
+            padding: 0;
+            margin-right: 10px;
+            border-radius: 50%;
+            color: #334155;
+            background: #e2e8f0;
+            font-size: 16px
+        }
+
+        .ticket-action:hover {
+            background: #cbd5e1
+        }
+
+        .ticket-action i {
+            font-family: FontAwesome;
+            margin: 4px 0 0 1px;
+            font-size: 20px;
+            color: #334155
+        }
+
+        .reward-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            margin-bottom: 25px;
+            padding: 15px;
+            border-radius: 16px;
+            color: #fff;
+            font-size: 15px;
+            background: #1e1b4b;
+            box-shadow: 0 8px 20px rgba(30, 27, 75, .2)
+        }
+
+        .detail-page-wrap {
+            display: flex;
+            justify-content: center
+        }
+
+        .detail-card {
+            padding: 25px;
+            border-radius: 24px;
+            background: #fff;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, .08);
+            margin-bottom: 20px
+        }
+
+        .reward-ticket {
+            --reward-color: #a855f7;
+            position: relative;
+            width: min(100%, 610px);
+            overflow: hidden;
+            border-radius: 30px;
+            background: linear-gradient(180deg, #fff 0%, #fff 67%, #faf8ff 67%, #faf8ff 100%);
+            box-shadow: 0 24px 60px rgba(49, 46, 129, .14), 0 5px 18px rgba(15, 23, 42, .08);
+            isolation: isolate
+        }
+
+        .reward-ticket::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 7px;
+            background: linear-gradient(90deg, #6366f1, var(--reward-color), #ec4899)
+        }
+
+        .ticket-main {
+            position: relative;
+            padding: 42px 46px 34px
+        }
+
+        .ticket-eyebrow {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 28px;
+            color: #6366f1;
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: 1.5px;
+            text-transform: uppercase
+        }
+
+        .ticket-eyebrow span:last-child {
+            color: #94a3b8;
+            font-size: 10px;
+            letter-spacing: 1px
+        }
+
+        .ticket-identity {
+            display: grid;
+            grid-template-columns: 82px 1fr;
+            gap: 22px;
+            align-items: start
+        }
+
+        .detail-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 82px;
+            height: 82px;
+            border-radius: 24px;
+            font-size: 39px;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .45), 0 8px 20px rgba(15, 23, 42, .08)
+        }
+
+        .ticket-heading {
+            min-width: 0
+        }
+
+        .detail-card h2,
+        .ticket-heading h2 {
+            margin: 2px 0 9px;
+            color: #1e1b4b;
+            font-size: clamp(27px, 5vw, 38px);
+            font-weight: 900;
+            letter-spacing: -1.2px;
+            line-height: 1.04
+        }
+
+        .detail-meta {
+            margin: 0;
+            color: #64748b;
+            font-size: 13px;
+            font-weight: 700
+        }
+
+        .detail-description {
+            margin: 30px 0 0;
+            max-width: 510px;
+            color: #475569;
+            font-size: 14px;
+            line-height: 1.7
+        }
+
+        .ticket-divider {
+            height: 1px;
+            margin: 0;
+            border-top: 2px dashed #d8d4fe
+        }
+
+        .ticket-redemption {
+            display: grid;
+            grid-template-columns: 1fr 150px;
+            gap: 28px;
+            align-items: center;
+            padding: 34px 46px 42px
+        }
+
+        .redemption-copy {
+            min-width: 0
+        }
+
+        .redemption-label {
+            margin-bottom: 7px;
+            color: #6366f1;
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 1.5px;
+            text-transform: uppercase
+        }
+
+        .redemption-title {
+            margin-bottom: 18px;
+            color: #1e1b4b;
+            font-size: 20px;
+            font-weight: 900
+        }
+
+        .redemption-hint {
+            margin: 0;
+            color: #64748b;
+            font-size: 12px;
+            line-height: 1.55
+        }
+
+        .detail-info {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+            margin-top: 27px
+        }
+
+        .detail-row {
+            min-width: 0;
+            padding: 13px 14px;
+            border: 1px solid #e9e7ff;
+            border-radius: 13px;
+            background: rgba(255, 255, 255, .72);
+            font-size: 12px;
+            line-height: 1.45
+        }
+
+        .detail-row:last-child {
+            grid-column: 1/-1
+        }
+
+        .detail-row strong {
+            display: block;
+            margin-bottom: 5px;
+            color: #1e1b4b;
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: .8px;
+            text-transform: uppercase
+        }
+
+        .qr-box {
+            display: none;
+            width: 150px;
+            min-height: 150px;
+            margin: 0;
+            padding: 13px;
+            border: 1px solid #e5e7eb;
+            border-radius: 18px;
+            text-align: center;
+            background: #fff;
+            box-shadow: 0 8px 20px rgba(15, 23, 42, .07)
+        }
+
+        .qr-box.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center
+        }
+
+        .fake-qr {
+            display: grid;
+            grid-template-columns: repeat(5, 14px);
+            gap: 3px;
+            width: max-content;
+            margin: 0 auto 11px;
+            padding: 4px;
+            background: #fff
+        }
+
+        .fake-qr span {
+            width: 14px;
+            height: 14px;
+            background: #0f172a
+        }
+
+        .fake-qr span:nth-child(2n) {
+            background: #fff
+        }
+
+        .fake-qr span:nth-child(3n),
+        .fake-qr span:nth-child(5n) {
+            background: #0f172a
+        }
+
+        .qr-box strong {
+            color: #334155;
+            font-size: 9px;
+            line-height: 1.3
+        }
+
+        .ticket-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 13px 46px;
+            border-top: 1px solid rgba(226, 232, 240, .7);
+            color: #94a3b8;
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase
+        }
+
+        .ticket-code {
+            color: #6366f1
+        }
+
+        .bot-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-top: 35px;
+            padding: 16px 18px;
+            border: 1px solid rgba(99, 102, 241, .15);
+            border-radius: 18px;
+            background: rgba(15, 23, 42, .85);
+            box-shadow: 0 5px 18px rgba(15, 23, 42, .06)
+        }
+
+        .bot-logo {
+            width: 120px;
+            height: auto;
+            display: block
+        }
+
+        .bot-info {
+            flex: 1
+        }
+
+        .bot-info strong {
+            display: block;
+            color: #fff;
+            font-size: 14px
+        }
+
+        .bot-info span {
+            color: #64748b;
+            font-size: 11px
+        }
+
+        .explorer-button {
+            padding: 9px 13px;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 800;
+            background: #1e1b4b;
+            white-space: nowrap
+        }
+
+        .explorer-button:hover {
+            background: #312e81
+        }
+
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        footer strong {
+            color: #1e1b4b;
+        }
+
+        @media(max-width:600px) {
+            .container {
+                padding: 25px 15px 40px
+            }
+
+            h1 {
+                font-size: 36px
+            }
+
+            .bingo {
+                gap: 10px
+            }
+
+            .square {
+                min-height: 145px;
+                padding: 14px 10px
+            }
+
+            .challenge {
+                font-size: 13px
+            }
+
+            .ticket-main {
+                padding: 32px 24px 28px
+            }
+
+            .ticket-eyebrow {
+                margin-bottom: 22px
+            }
+
+            .ticket-identity {
+                grid-template-columns: 64px 1fr;
+                gap: 16px
+            }
+
+            .detail-icon {
+                width: 64px;
+                height: 64px;
+                border-radius: 19px;
+                font-size: 30px
+            }
+
+            .detail-card h2,
+            .ticket-heading h2 {
+                font-size: 27px
+            }
+
+            .detail-description {
+                margin-top: 24px
+            }
+
+            .detail-info {
+                grid-template-columns: 1fr
+            }
+
+            .detail-row:last-child {
+                grid-column: auto
+            }
+
+            .ticket-redemption {
+                grid-template-columns: 1fr;
+                gap: 22px;
+                padding: 28px 24px 32px
+            }
+
+            .qr-box {
+                justify-self: center;
+                width: 168px;
+                min-height: 168px
+            }
+
+            .ticket-footer {
+                padding: 12px 24px
+            }
+
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">🏙️ City Bingo</div>
+            <button class="connect-button" id="connectButton">Connect Wallet</button>
+        </header>
+
+        <div class="wallet" id="wallet">Wallet not connected</div>
+
+        <main class="page active" id="homePage">
+            <h1>Surabaya Bingo</h1>
+            <div class="subtitle">Explore Surabaya. Complete the board. Get Bingo.</div>
+            <button class="reward-button" onclick="showRewards()">🎟️ My Rewards</button>
+
+            <div class="stats-container">
+                <div class="stat-card">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-info"><span class="stat-label">Tasks Completed</span><span class="stat-value"
+                            id="completedCount">0 / 9</span></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⚡</div>
+                    <div class="stat-info"><span class="stat-label">Bingo Lines</span><span class="stat-value"
+                            id="linesCount">0 Lines</span></div>
+                </div>
+            </div>
+
+            <div class="bingo" id="bingoBoard"></div>
+            <div class="status" id="status">Connect your wallet to start.</div>
+            <div class="bingo-status" id="bingoStatus">
+                <div style="font-size:28px;font-weight:900">🎉 BINGO!</div>
+                <div>You completed a Bingo line! Your reward is unlocked.</div>
+            </div>
+        </main>
+
+        <main class="page" id="rewardsPage">
+            <div class="rewards-header">
+                <h1>My Rewards</h1>
+                <button class="back-button" onclick="showHome()">← Back</button>
+            </div>
+            <div class="subtitle">Rewards you've unlocked from City Bingo.</div>
+            <div class="reward-list" id="rewardList"></div>
+        </main>
+
+        <main class="page" id="detailPage">
+            <div class="rewards-header">
+                <h1>Reward</h1>
+                <button class="back-button" onclick="showRewards()">← Back</button>
+            </div>
+
+            <div class="detail-page-wrap">
+                <article class="reward-ticket" id="rewardTicket">
+                    <section class="ticket-main">
+                        <div class="ticket-eyebrow"><span>City Bingo Reward</span><span id="ticketBingo">UNLOCKED</span>
+                        </div>
+
+                        <div class="ticket-identity">
+                            <div class="detail-icon" id="detailIcon">🎁</div>
+                            <div class="ticket-heading">
+                                <h2 id="detailTitle">Reward</h2>
+                                <div class="detail-meta" id="detailMeta">Unlocked reward</div>
+                            </div>
+                        </div>
+
+                        <div class="detail-description" id="detailDescription"></div>
+
+                        <div class="detail-info">
+                            <div class="detail-row"><strong>Location</strong><span id="detailLocation"></span></div>
+                            <div class="detail-row"><strong>Valid Until</strong><span id="detailExpiry"></span></div>
+                            <div class="detail-row"><strong>Terms</strong><span id="detailTerms"></span></div>
+                        </div>
+                    </section>
+
+                    <div class="ticket-divider"></div>
+
+                    <section class="ticket-redemption">
+                        <div class="redemption-copy">
+                            <div class="redemption-label">Redemption</div>
+                            <div class="redemption-title">Present this ticket</div>
+                            <p class="redemption-hint">Show the QR code at the participating venue when redeeming this
+                                reward.</p>
+                        </div>
+
+                        <div class="qr-box" id="qrBox">
+                            <div class="fake-qr">
+                                <span></span><span></span><span></span><span></span><span></span>
+                                <span></span><span></span><span></span><span></span><span></span>
+                                <span></span><span></span><span></span><span></span><span></span>
+                                <span></span><span></span><span></span><span></span><span></span>
+                                <span></span><span></span><span></span><span></span><span></span>
+                            </div>
+                            <strong>Scan at venue</strong>
+                        </div>
+                    </section>
+
+                    <div class="bot-brand">
+                        <img class="bot-logo" src="https://www.botchain.ai/icons/footer-logo.png" alt="BOT Chain">
+                        <div class="bot-info">
+                            <strong>Powered by BOT Chain</strong>
+                            <span>Verify the project on-chain</span>
+                        </div>
+                        <a class="explorer-button" id="explorerButton" href="#" target="_blank"
+                            rel="noopener noreferrer">
+                            🔍 Explorer
+                        </a>
+                    </div>
+
+
+                </article>
+            </div>
+        </main>
+
+        <footer>Powered by <strong>BOT Chain</strong> · Explorer</footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.5/dist/ethers.umd.min.js"></script>
+
+    <script>
+        const CONTRACT_ADDRESS = "0x016052D388D5540d6b18cc30b53581A07Dbd6F88";
+        const BOT_CHAIN_ID = 968;
+        const CONTRACT_ABI = [
+            "function completeChallenge(uint256 id)",
+            "function isCompleted(address player,uint256 id) view returns (bool)",
+            "function hasBingo(address player) view returns (bool)"
+        ];
+        const MAINNET_CONTRACT_ADDRESS = CONTRACT_ADDRESS;
+        const MAINNET_EXPLORER = `https://scan.botchain.ai/address/${MAINNET_CONTRACT_ADDRESS}`;
+
+        const challenges = [
+            ["☕", "Visit Jl. Tunjungan"],
+            ["📸", "Take a photo on Perahu Kalimas"],
+            ["🍜", "Try local food at Pasar Atom"],
+            ["🏛️", "Visit a cultural spot"],
+            ["🎪", "Attend an event"],
+            ["🛍️", "Support a local business"],
+            ["🌳", "Visit Kota Lama"],
+            ["🚶", "Explore a new area"],
+            ["🧑‍🤝‍🧑", "Ride Bus SSCT with a friend"]
+        ];
+
+        const rewards = [
+            { bingo: 1, icon: "🍔", color: "#facc15", date: "Oct 08 at 6:00 PM", title: "F&B Voucher", location: "📍 Surabaya", description: "Enjoy an F&B voucher from one of our City Bingo partner venues.", expiry: "October 31, 2026", terms: "1 voucher per user. Valid at participating partner venues." },
+            { bingo: 2, icon: "☕", color: "#f9a8d4", date: "Oct 12 at 7:00 PM", title: "Free Starbucks Drink", location: "📍 Starbucks Surabaya", description: "Get one free drink from a participating Starbucks location in Surabaya.", expiry: "October 31, 2026", terms: "1 handcrafted beverage. Participating locations only." },
+            { bingo: 3, icon: "🍕", color: "#fb923c", date: "Oct 16 at 8:00 PM", title: "Premium F&B Voucher", location: "📍 Pizza Hut Surabaya", description: "Enjoy a premium F&B voucher worth Rp100K–150K at Pizza Hut.", expiry: "October 31, 2026", terms: "Minimum purchase and participating outlets may apply." },
+            { bingo: 4, icon: "🚌", color: "#60a5fa", date: "Oct 20 at 4:00 PM", title: "Free SSCT Ticket", location: "📍 Surabaya Sightseeing & City Tour", description: "Explore Surabaya with a complimentary SSCT city tour ticket.", expiry: "October 31, 2026", terms: "1 SSCT ticket per user. Reservation may be required." },
+            { bingo: 5, icon: "🎟️", color: "#c084fc", date: "Oct 24 at 7:30 PM", title: "Surabaya Urban Culture Festival", location: "📍 Surabaya", description: "Get a free ticket to Surabaya Urban Culture Festival.", expiry: "October 31, 2026", terms: "Valid for one event admission. Subject to event availability." },
+            { bingo: 6, icon: "🎻", color: "#f472b6", date: "Oct 28 at 7:00 PM", title: "MANIFEST: Grand Orchestra featuring Raisa Anggiani", location: "📍 Surabaya", description: "Enjoy a complimentary ticket to MANIFEST: Grand Orchestra featuring Raisa Anggiani.", expiry: "October 31, 2026", terms: "1 event ticket per user. Venue and seating are subject to ticket allocation." }
+        ];
+
+        let provider = null, signer = null, contract = null, currentAccount = null, completedState = Array(9).fill(false);
+
+        const connectButton = document.getElementById("connectButton");
+        const walletText = document.getElementById("wallet");
+        const statusText = document.getElementById("status");
+        const board = document.getElementById("bingoBoard");
+        const completedCount = document.getElementById("completedCount");
+        const linesCount = document.getElementById("linesCount");
+        const bingoStatus = document.getElementById("bingoStatus");
+        document.getElementById("explorerButton").href = MAINNET_EXPLORER;
+
+        const bingoLines = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8],
+            [0, 3, 6], [1, 4, 7], [2, 5, 8],
+            [0, 4, 8], [2, 4, 6]
+        ];
+
+        function showPage(id) {
+            document.querySelectorAll(".page").forEach(page => page.classList.remove("active"));
+            document.getElementById(id).classList.add("active");
+        }
+
+        function showHome() { showPage("homePage") }
+        function getBingoCount() { return calculateBingoLines(completedState) }
+
+        function showRewards() {
+            showPage("rewardsPage");
+            renderRewards();
+        }
+
+        function showRewardDetail(index) {
+            const reward = rewards[index];
+            showPage("detailPage");
+
+            const ticket = document.getElementById("rewardTicket");
+            const icon = document.getElementById("detailIcon");
+            const qrBox = document.getElementById("qrBox");
+
+            ticket.style.setProperty("--reward-color", reward.color);
+            icon.innerText = reward.icon;
+            icon.style.background = reward.color;
+            document.getElementById("detailTitle").innerText = reward.title;
+            document.getElementById("detailMeta").innerText = `Unlocked at ${reward.bingo} Bingo`;
+            document.getElementById("ticketBingo").innerText = `${reward.bingo} BINGO`;
+            document.getElementById("detailDescription").innerText = reward.description;
+            document.getElementById("detailLocation").innerText = reward.location;
+            document.getElementById("detailExpiry").innerText = reward.expiry;
+            document.getElementById("detailTerms").innerText = reward.terms;
+            qrBox.classList.add("active");
+        }
+
+        function renderRewards() {
+            const list = document.getElementById("rewardList");
+            const bingoCount = getBingoCount();
+            list.innerHTML = "";
+
+            if (!currentAccount) {
+                list.innerHTML = `<div class="detail-card"><div class="detail-icon">🔐</div><h2>Connect Your Wallet</h2><div class="detail-description">Connect your wallet to see the rewards you've unlocked.</div></div>`;
+                return;
+            }
+
+            if (!bingoCount) {
+                list.innerHTML = `<div class="detail-card"><div class="detail-icon">🎟️</div><h2>No Rewards Yet</h2><div class="detail-description">Complete a Bingo line to unlock your first reward.</div></div>`;
+                return;
+            }
+
+            rewards.filter(reward => reward.bingo <= bingoCount).forEach(reward => {
+                const rewardIndex = rewards.indexOf(reward);
+                const ticket = document.createElement("div");
+                ticket.className = "ticket";
+                ticket.innerHTML = `
+<div class="ticket-color" style="background:${reward.color}">${reward.icon}</div>
+<div class="ticket-content">
+<div class="ticket-date">${reward.date}</div>
+<div class="ticket-title">${reward.title}</div>
+<div class="ticket-location">${reward.location}</div>
+</div>
+<button class="ticket-action" title="View reward"><i class="fa fa-qrcode" aria-hidden="true"></i></button>`;
+                ticket.querySelector(".ticket-action").onclick = () => showRewardDetail(rewardIndex);
+                list.appendChild(ticket);
+            });
+        }
+
+        function createBoard() {
+            board.innerHTML = "";
+            challenges.forEach(([emoji, title], index) => {
+                const square = document.createElement("div");
+                square.className = "square";
+                square.id = `square-${index}`;
+                square.innerHTML = `<div class="emoji">${emoji}</div><div class="challenge">${title}</div><button class="claim">Verify Visit</button>`;
+                square.querySelector(".claim").onclick = () => verifyLocation(index);
+                board.appendChild(square);
+            });
+        }
+
+        function calculateBingoLines(grid) {
+            return bingoLines.filter(([a, b, c]) => grid[a] && grid[b] && grid[c]).length;
+        }
+
+        function updateStats() {
+            const totalDone = completedState.filter(Boolean).length;
+            const totalLines = calculateBingoLines(completedState);
+            completedCount.innerText = `${totalDone} / 9`;
+            linesCount.innerText = `${totalLines} ${totalLines === 1 ? "Line" : "Lines"}`;
+        }
+
+        function markCompleted(id) {
+            const square = document.getElementById(`square-${id}`);
+            const button = square.querySelector(".claim");
+            square.classList.add("completed");
+            square.classList.remove("qr-selected");
+            button.innerText = "Completed ✓";
+            button.disabled = true;
+            button.onclick = null;
+        }
+
+        function verifyLocation(id) {
+            document.querySelectorAll(".square").forEach(square => square.classList.remove("qr-selected"));
+
+            const square = document.getElementById(`square-${id}`);
+            const button = square.querySelector(".claim");
+
+            square.classList.add("qr-selected");
+            button.innerText = "Claim on-chain";
+            button.onclick = () => claimChallenge(id);
+            statusText.innerText = `📍 ${challenges[id][1]} verified! Ready to claim on-chain.`;
+        }
+
+        async function checkNetwork() {
+            if (!provider) return false;
+            const network = await provider.getNetwork();
+
+            if (Number(network.chainId) !== BOT_CHAIN_ID) {
+                statusText.innerText = "Please switch MetaMask to BOT Chain Testnet.";
+                return false;
+            }
+            return true;
+        }
+
+        async function connectWallet() {
+            if (!window.ethereum) {
+                alert("Please install MetaMask first.");
+                return;
+            }
+
+            try {
+                statusText.innerText = "Connecting wallet...";
+                await window.ethereum.request({ method: "eth_requestAccounts" });
+
+                provider = new ethers.BrowserProvider(window.ethereum);
+                signer = await provider.getSigner();
+                currentAccount = await signer.getAddress();
+
+                if (!(await checkNetwork())) {
+                    await window.ethereum.request({
+                        method: "wallet_switchEthereumChain",
+                        params: [{ chainId: "0x3C8" }]
+                    });
+                    provider = new ethers.BrowserProvider(window.ethereum);
+                    signer = await provider.getSigner();
+                }
+
+                contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
+                walletText.innerText = `Wallet: ${currentAccount.slice(0, 6)}...${currentAccount.slice(-4)}`;
+                connectButton.innerText = "Connected";
+                connectButton.disabled = true;
+
+                await loadProgress();
+            } catch (error) {
+                console.error(error);
+                statusText.innerText = "Wallet connection failed.";
+            }
+        }
+
+        function resetBoard() {
+            for (let i = 0; i < challenges.length; i++) {
+                const square = document.getElementById(`square-${i}`);
+                const button = square.querySelector(".claim");
+
+                square.classList.remove("completed", "qr-selected");
+                button.disabled = false;
+                button.innerText = "Verify Visit";
+                button.onclick = () => verifyLocation(i);
+            }
+        }
+
+        async function loadProgress() {
+            if (!contract || !currentAccount) return;
+
+            completedState = Array(9).fill(false);
+            resetBoard();
+
+            for (let i = 0; i < challenges.length; i++) {
+                try {
+                    const done = await contract.isCompleted(currentAccount, i);
+                    if (done) {
+                        completedState[i] = true;
+                        markCompleted(i);
+                    }
+                } catch (error) {
+                    console.error(error);
+                }
+            }
+
+            updateStats();
+
+            try {
+                const bingo = await contract.hasBingo(currentAccount);
+                if (bingo) bingoStatus.classList.add("active");
+            } catch (error) {
+                console.error(error);
+            }
+
+            statusText.innerText = "Your Bingo board is ready!";
+        }
+
+        async function claimChallenge(id) {
+            if (!contract) {
+                await connectWallet();
+                if (!contract) return;
+            }
+
+            if (!(await checkNetwork())) return;
+
+            const square = document.getElementById(`square-${id}`);
+            const button = square.querySelector(".claim");
+
+            button.disabled = true;
+            button.innerText = "Waiting...";
+
+            try {
+                statusText.innerText = "Waiting for MetaMask...";
+                const tx = await contract.completeChallenge(id);
+
+                statusText.innerText = "Transaction submitted. Waiting for confirmation...";
+                button.innerText = "Confirming...";
+
+                await tx.wait();
+
+                completedState[id] = true;
+                markCompleted(id);
+                updateStats();
+
+                const bingo = await contract.hasBingo(currentAccount);
+
+                if (bingo) {
+                    bingoStatus.classList.add("active");
+                    statusText.innerText = "🎉 BINGO! You unlocked a new reward!";
+                } else {
+                    statusText.innerText = `${challenges[id][1]} completed on BOT Chain! 🎉`;
+                }
+            } catch (error) {
+                console.error(error);
+                button.disabled = false;
+                button.innerText = "Claim on-chain";
+
+                if (error.code === 4001) {
+                    statusText.innerText = "Transaction cancelled in MetaMask.";
+                    return;
+                }
+
+                statusText.innerText = "Transaction failed. Please try again.";
+            }
+        }
+
+        connectButton.addEventListener("click", connectWallet);
+        createBoard();
+    </script>
+</body>
+
+</html>
